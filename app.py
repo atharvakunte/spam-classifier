@@ -42,7 +42,7 @@ METRIC_NAMES = ["Accuracy", "AUC", "Precision", "Recall", "F1", "MCC"]
 
 
 # ---------------------------------------------------------------------------
-# Core logic
+# Core logic (kept free of UI calls so it is easy to test)
 # ---------------------------------------------------------------------------
 @st.cache_resource
 def load_model(model_name):
@@ -150,19 +150,18 @@ def main():
                                     help=f"Needs the 57 feature columns plus '{TARGET}'.")
         st.header("2. Model")
         model_name = st.selectbox("Choose a classifier", list(MODEL_FILES))
-        st.caption("Tip: the repo's `test_data.csv` is the file to upload.")
+        st.caption("Tip: upload the repo's `test_data.csv`.")
+        if os.path.exists(SAMPLE_CSV):
+            with open(SAMPLE_CSV, "rb") as f:
+                st.download_button("Download test_data.csv", f.read(),
+                                   file_name="test_data.csv", mime="text/csv")
 
-    if uploaded is not None:
-        df = pd.read_csv(uploaded)
-        source = f"uploaded file: {uploaded.name}"
-    elif os.path.exists(SAMPLE_CSV):
-        df = pd.read_csv(SAMPLE_CSV)
-        source = "bundled test_data.csv (no file uploaded yet)"
-    else:
-        st.info("Upload a test CSV in the sidebar to get started.")
+    if uploaded is None:
+        st.info("Upload a test CSV in the sidebar to see the results.")
         return
 
-    st.caption(f"Scoring {len(df):,} emails from the {source}.")
+    df = pd.read_csv(uploaded)
+    st.caption(f"Scoring {len(df):,} emails from the uploaded file: {uploaded.name}.")
 
     model = load_model(model_name)
     try:
