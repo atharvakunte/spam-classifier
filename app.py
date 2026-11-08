@@ -136,7 +136,7 @@ def roc_figure(roc_points):
 # ---------------------------------------------------------------------------
 def main():
     st.set_page_config(page_title="Spam Filter Lab", page_icon="📬", layout="wide")
-    st.title("📬 Spam Filter Lab")
+    st.title("Spam Classifier")
     st.write(
         "Compare five classifiers trained on the UCI **Spambase** dataset "
         "(57 text-statistics features per email). Upload the test CSV, pick a model, "
